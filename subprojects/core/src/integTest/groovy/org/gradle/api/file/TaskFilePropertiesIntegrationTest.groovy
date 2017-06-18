@@ -18,8 +18,6 @@ package org.gradle.api.file
 
 import org.gradle.integtests.fixtures.AbstractIntegrationSpec
 
-import static org.gradle.integtests.fixtures.executer.TaskOrderSpecs.any
-
 class TaskFilePropertiesIntegrationTest extends AbstractIntegrationSpec {
     def "task can use Path to represent input and output locations on annotated properties"() {
         buildFile << """
@@ -145,45 +143,4 @@ class TaskFilePropertiesIntegrationTest extends AbstractIntegrationSpec {
         then:
         result.assertTasksNotSkipped(":transform")
     }
-
-    def "task dependencies are inferred from contents of input FileCollection"() {
-        // Include a configuration with transitive dep on a Jar and an unmanaged Jar.
-        file('settings.gradle') << 'include "a", "b"'
-        file('a/build.gradle') << '''
-configurations { compile }
-dependencies { compile project(path: ':b', configuration: 'archives') }
-
-task doStuff(type: InputTask) {
-    src = configurations.compile + fileTree('src/java')
-}
-
-class InputTask extends DefaultTask {
-    @InputFiles
-    def FileCollection src
-}
-'''
-        file('b/build.gradle') << '''
-apply plugin: 'base'
-task jar {
-    doLast {
-        file('b.jar').text = 'some jar'
-    }
-}
-
-task otherJar(type: Jar) {
-    destinationDir = buildDir
-}
-
-configurations { archives }
-dependencies { archives files('b.jar') { builtBy jar } }
-artifacts { archives otherJar }
-'''
-
-        when:
-        run("doStuff")
-
-        then:
-        result.assertTasksExecutedInOrder(any(':b:jar', ':b:otherJar'), ':a:doStuff')
-    }
-
 }

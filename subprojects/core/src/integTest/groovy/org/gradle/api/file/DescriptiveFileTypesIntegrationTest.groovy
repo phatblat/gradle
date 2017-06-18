@@ -14,73 +14,29 @@
  * limitations under the License.
  */
 
+/*
+ * Copyright 2017 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.gradle.api.file
 
 import org.gradle.integtests.fixtures.AbstractIntegrationSpec
 
-class FileProvidersIntegrationTest extends AbstractIntegrationSpec {
-    def "can attach a calculated directory to task property"() {
-        buildFile << """
-            class SomeTask extends DefaultTask {
-                final DirectoryVar outputDir = project.layout.newDirectoryVar()
-                
-                Directory getOutputDir() { return outputDir.getOrNull() }
+import static org.gradle.integtests.fixtures.executer.TaskOrderSpecs.any
 
-                void setOutputDir(Provider<Directory> f) { outputDir.set(f) }
-                
-                @TaskAction
-                void go() {
-                    println "task output dir: " + outputDir.get() 
-                }
-            }
-            
-            ext.childDirName = "child"
-            def t = tasks.create("show", SomeTask)
-            t.outputDir = layout.buildDirectory.dir(providers.provider { childDirName })
-            println "output dir before: " + t.outputDir.get()
-            buildDir = "output/some-dir"
-            childDirName = "other-child"
-"""
-
-        when:
-        run("show")
-
-        then:
-        outputContains("output dir before: " + testDirectory.file("build/child"))
-        outputContains("task output dir: " + testDirectory.file("output/some-dir/other-child"))
-    }
-
-    def "can attach a calculated file to task property"() {
-        buildFile << """
-            class SomeTask extends DefaultTask {
-                final RegularFileVar outputFile = project.layout.newFileVar()
-                
-                RegularFile getOutputFile() { return outputFile.getOrNull() }
-
-                void setOutputFile(Provider<RegularFile> f) { outputFile.set(f) }
-                
-                @TaskAction
-                void go() {
-                    println "task output file: " + outputFile.get() 
-                }
-            }
-            
-            ext.childDirName = "child"
-            def t = tasks.create("show", SomeTask)
-            t.outputFile = layout.buildDirectory.file(providers.provider { childDirName })
-            println "output file before: " + t.outputFile.get()
-            buildDir = "output/some-dir"
-            childDirName = "other-child"
-"""
-
-        when:
-        run("show")
-
-        then:
-        outputContains("output file before: " + testDirectory.file("build/child"))
-        outputContains("task output file: " + testDirectory.file("output/some-dir/other-child"))
-    }
-
+class DescriptiveFileTypesIntegrationTest extends AbstractIntegrationSpec {
     def "can wire the output of a task as input to another task"() {
         buildFile << """
             class DirOutputTask extends DefaultTask {
@@ -172,4 +128,43 @@ class FileProvidersIntegrationTest extends AbstractIntegrationSpec {
         file("output/merged.txt").text == 'new-file1,file2,dir1'
     }
 
+    def "task dependencies are inferred from contents of input FileCollection"() {
+        // Include a configuration with transitive dep on a Jar and an unmanaged Jar.
+        file('settings.gradle') << 'include "a", "b"'
+        file('a/build.gradle') << '''
+            configurations { compile }
+            dependencies { compile project(path: ':b', configuration: 'archives') }
+            
+            task doStuff(type: InputTask) {
+                src = configurations.compile + fileTree('src/java')
+            }
+            
+            class InputTask extends DefaultTask {
+                @InputFiles
+                def FileCollection src
+            }
+        '''
+        file('b/build.gradle') << '''
+            apply plugin: 'base'
+            task jar {
+                doLast {
+                    file('b.jar').text = 'some jar'
+                }
+            }
+            
+            task otherJar(type: Jar) {
+                destinationDir = buildDir
+            }
+            
+            configurations { archives }
+            dependencies { archives files('b.jar') { builtBy jar } }
+            artifacts { archives otherJar }
+        '''
+
+        when:
+        run("doStuff")
+
+        then:
+        result.assertTasksExecutedInOrder(any(':b:jar', ':b:otherJar'), ':a:doStuff')
+    }
 }
