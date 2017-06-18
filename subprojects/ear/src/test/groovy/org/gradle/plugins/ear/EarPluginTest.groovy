@@ -324,13 +324,9 @@ class EarPluginTest extends AbstractProjectBuilderSpec {
 
     private static void execute(Task task) {
         for (Task dep : task.taskDependencies.getDependencies(task)) {
-            for (Action action : dep.actions) {
-                action.execute(dep)
-            }
+            dep.execute()
         }
-        for (Action action : task.actions) {
-            action.execute(task)
-        }
+        task.execute()
     }
 
     File inEar(path) {
