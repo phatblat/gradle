@@ -17,6 +17,7 @@ TBD - This release builds on the `Provider` concept added in Gradle 4.0 to add c
 - Added `Directory` and `RegularFile` abstractions and providers to represent locations that are calculated lazily.
 - Added a `ProjectLayout` service that allows input and output locations to be defined relative to the project's project directory and build directory. 
 - `Project.file()` and `Project.files()` can resolve `Provider` instances to `File` and `FileCollection` instances.
+- Added `AbstractTask.newOutputDirectory()` and `newOutputFile()` and `newInputFile()` methods to allow the input and output locations of tasks to be configured using these new types. Gradle will infer task dependencies based on task inputs configured this way.
 
 ## Promoted features
 
