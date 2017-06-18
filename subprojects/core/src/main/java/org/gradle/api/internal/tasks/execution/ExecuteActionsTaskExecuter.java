@@ -35,9 +35,9 @@ import org.gradle.internal.exceptions.DefaultMultiCauseException;
 import org.gradle.internal.exceptions.MultiCauseException;
 import org.gradle.internal.operations.BuildOperationContext;
 import org.gradle.internal.operations.BuildOperationExecutor;
-import org.gradle.internal.progress.BuildOperationState;
 import org.gradle.internal.operations.RunnableBuildOperation;
 import org.gradle.internal.progress.BuildOperationDescriptor;
+import org.gradle.internal.progress.BuildOperationState;
 import org.gradle.internal.work.AsyncWorkTracker;
 
 import java.util.ArrayList;
@@ -48,13 +48,11 @@ import java.util.List;
  */
 public class ExecuteActionsTaskExecuter implements TaskExecuter {
     private static final Logger LOGGER = Logging.getLogger(ExecuteActionsTaskExecuter.class);
-    private final TaskOutputsGenerationListener outputsGenerationListener;
     private final TaskActionListener listener;
     private final BuildOperationExecutor buildOperationExecutor;
     private final AsyncWorkTracker asyncWorkTracker;
 
-    public ExecuteActionsTaskExecuter(TaskOutputsGenerationListener outputsGenerationListener, TaskActionListener taskActionListener, BuildOperationExecutor buildOperationExecutor, AsyncWorkTracker asyncWorkTracker) {
-        this.outputsGenerationListener = outputsGenerationListener;
+    public ExecuteActionsTaskExecuter(TaskActionListener taskActionListener, BuildOperationExecutor buildOperationExecutor, AsyncWorkTracker asyncWorkTracker) {
         this.listener = taskActionListener;
         this.buildOperationExecutor = buildOperationExecutor;
         this.asyncWorkTracker = asyncWorkTracker;
@@ -62,9 +60,6 @@ public class ExecuteActionsTaskExecuter implements TaskExecuter {
 
     public void execute(TaskInternal task, TaskStateInternal state, TaskExecutionContext context) {
         listener.beforeActions(task);
-        if (!task.getTaskActions().isEmpty()) {
-            outputsGenerationListener.beforeTaskOutputsGenerated();
-        }
         state.setExecuting(true);
         try {
             GradleException failure = executeActions(task, state, context);

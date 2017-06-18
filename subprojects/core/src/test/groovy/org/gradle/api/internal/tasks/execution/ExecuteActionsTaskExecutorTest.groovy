@@ -46,10 +46,9 @@ class ExecuteActionsTaskExecutorTest extends Specification {
     private final ScriptSource scriptSource = Mock(ScriptSource)
     private final StandardOutputCapture standardOutputCapture = Mock(StandardOutputCapture)
     private final TaskActionListener publicListener = Mock(TaskActionListener)
-    private final TaskOutputsGenerationListener internalListener = Mock(TaskOutputsGenerationListener)
     private final BuildOperationExecutor buildOperationExecutor = Mock(BuildOperationExecutor)
     private final AsyncWorkTracker asyncWorkTracker = Mock(AsyncWorkTracker)
-    private final ExecuteActionsTaskExecuter executer = new ExecuteActionsTaskExecuter(internalListener, publicListener, buildOperationExecutor, asyncWorkTracker)
+    private final ExecuteActionsTaskExecuter executer = new ExecuteActionsTaskExecuter(publicListener, buildOperationExecutor, asyncWorkTracker)
 
     def setup() {
         ProjectInternal project = Mock(ProjectInternal)
@@ -66,7 +65,6 @@ class ExecuteActionsTaskExecutorTest extends Specification {
             0 * executionContext._
             0 * standardOutputCapture._
             0 * publicListener._
-            0 * internalListener._
         }
     }
 
@@ -99,8 +97,6 @@ class ExecuteActionsTaskExecutorTest extends Specification {
 
         then:
         1 * publicListener.beforeActions(task)
-        then:
-        1 * internalListener.beforeTaskOutputsGenerated()
         then:
         1 * standardOutputCapture.start()
         then:
@@ -155,8 +151,6 @@ class ExecuteActionsTaskExecutorTest extends Specification {
         then:
         1 * publicListener.beforeActions(task)
         then:
-        1 * internalListener.beforeTaskOutputsGenerated()
-        then:
         1 * standardOutputCapture.start()
 
         then:
@@ -191,8 +185,6 @@ class ExecuteActionsTaskExecutorTest extends Specification {
 
         then:
         1 * publicListener.beforeActions(task)
-        then:
-        1 * internalListener.beforeTaskOutputsGenerated()
         then:
         1 * standardOutputCapture.start()
         then:
@@ -230,8 +222,6 @@ class ExecuteActionsTaskExecutorTest extends Specification {
         then:
         1 * publicListener.beforeActions(task)
         then:
-        1 * internalListener.beforeTaskOutputsGenerated()
-        then:
         1 * standardOutputCapture.start()
         then:
         1 * action1.contextualise(executionContext)
@@ -265,8 +255,6 @@ class ExecuteActionsTaskExecutorTest extends Specification {
 
         then:
         1 * publicListener.beforeActions(task)
-        then:
-        1 * internalListener.beforeTaskOutputsGenerated()
         then:
         1 * standardOutputCapture.start()
         then:
@@ -319,8 +307,6 @@ class ExecuteActionsTaskExecutorTest extends Specification {
         then:
         1 * publicListener.beforeActions(task)
         then:
-        1 * internalListener.beforeTaskOutputsGenerated()
-        then:
         1 * standardOutputCapture.start()
         then:
         1 * action1.contextualise(executionContext)
@@ -364,8 +350,6 @@ class ExecuteActionsTaskExecutorTest extends Specification {
         then:
         1 * publicListener.beforeActions(task)
         then:
-        1 * internalListener.beforeTaskOutputsGenerated()
-        then:
         1 * standardOutputCapture.start()
         then:
         1 * action1.contextualise(executionContext)
@@ -407,8 +391,6 @@ class ExecuteActionsTaskExecutorTest extends Specification {
 
         then:
         1 * publicListener.beforeActions(task)
-        then:
-        1 * internalListener.beforeTaskOutputsGenerated()
         then:
         1 * standardOutputCapture.start()
         then:

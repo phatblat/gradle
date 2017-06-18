@@ -45,6 +45,20 @@ class CacheableTaskOutputCompositeFilePropertyElementSpec implements CacheableTa
     }
 
     @Override
+    public void prepareOutputs() {
+        switch (parentProperty.getOutputType()) {
+            case FILE:
+                TaskOutputsUtil.ensureParentDirectoryExists(file);
+                break;
+            case DIRECTORY:
+                TaskOutputsUtil.ensureDirectoryExists(file);
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    @Override
     public FileCollection getPropertyFiles() {
         return files;
     }

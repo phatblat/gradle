@@ -44,4 +44,9 @@ public interface TaskOutputsInternal extends TaskOutputs {
      * Returns whether the task has declared any outputs.
      */
     boolean hasDeclaredOutputs();
+
+    /**
+     * Prepares the outputs of this task, called just prior to execution of the first task action.
+     */
+    void prepareOutputs();
 }

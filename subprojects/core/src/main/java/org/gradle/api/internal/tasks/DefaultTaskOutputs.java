@@ -206,7 +206,7 @@ public class DefaultTaskOutputs implements TaskOutputsInternal {
     public TaskOutputFilePropertyBuilder file(final Object path) {
         return taskMutator.mutate("TaskOutputs.file(Object)", new Callable<TaskOutputFilePropertyBuilder>() {
             @Override
-            public TaskOutputFilePropertyBuilder call() throws Exception {
+            public TaskOutputFilePropertyBuilder call() {
                 return addSpec(new DefaultCacheableTaskOutputFilePropertySpec(task.getName(), resolver, OutputType.FILE, path));
             }
         });
@@ -216,7 +216,7 @@ public class DefaultTaskOutputs implements TaskOutputsInternal {
     public TaskOutputFilePropertyBuilder dir(final Object path) {
         return taskMutator.mutate("TaskOutputs.dir(Object)", new Callable<TaskOutputFilePropertyBuilder>() {
             @Override
-            public TaskOutputFilePropertyBuilder call() throws Exception {
+            public TaskOutputFilePropertyBuilder call() {
                 return addSpec(new DefaultCacheableTaskOutputFilePropertySpec(task.getName(), resolver, OutputType.DIRECTORY, path));
             }
         });
@@ -226,7 +226,7 @@ public class DefaultTaskOutputs implements TaskOutputsInternal {
     public TaskOutputFilePropertyBuilder files(final Object... paths) {
         return taskMutator.mutate("TaskOutputs.files(Object...)", new Callable<TaskOutputFilePropertyBuilder>() {
             @Override
-            public TaskOutputFilePropertyBuilder call() throws Exception {
+            public TaskOutputFilePropertyBuilder call() {
                 return addSpec(new CompositeTaskOutputPropertySpec(task.getName(), resolver, OutputType.FILE, paths));
             }
         });
@@ -236,7 +236,7 @@ public class DefaultTaskOutputs implements TaskOutputsInternal {
     public TaskOutputFilePropertyBuilder dirs(final Object... paths) {
         return taskMutator.mutate("TaskOutputs.dirs(Object...)", new Callable<TaskOutputFilePropertyBuilder>() {
             @Override
-            public TaskOutputFilePropertyBuilder call() throws Exception {
+            public TaskOutputFilePropertyBuilder call() {
                 return addSpec(new CompositeTaskOutputPropertySpec(task.getName(), resolver, OutputType.DIRECTORY, paths));
             }
         });
@@ -260,10 +260,17 @@ public class DefaultTaskOutputs implements TaskOutputsInternal {
         this.history = history;
     }
 
+    @Override
+    public void prepareOutputs() {
+        for (TaskOutputFilePropertySpec propertySpec : getFileProperties()) {
+            propertySpec.prepareOutputs();
+        }
+    }
+
     private class TaskOutputUnionFileCollection extends CompositeFileCollection implements Describable {
         private final TaskInternal buildDependencies;
 
-        public TaskOutputUnionFileCollection(TaskInternal buildDependencies) {
+        TaskOutputUnionFileCollection(TaskInternal buildDependencies) {
             this.buildDependencies = buildDependencies;
         }
 

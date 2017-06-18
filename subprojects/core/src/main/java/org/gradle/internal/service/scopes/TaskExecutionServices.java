@@ -42,6 +42,7 @@ import org.gradle.api.internal.tasks.TaskExecuter;
 import org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter;
 import org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter;
 import org.gradle.api.internal.tasks.execution.ExecuteAtMostOnceTaskExecuter;
+import org.gradle.api.internal.tasks.execution.PrepareOutputsTaskExecuter;
 import org.gradle.api.internal.tasks.execution.ResolveBuildCacheKeyExecuter;
 import org.gradle.api.internal.tasks.execution.ResolveTaskArtifactStateTaskExecuter;
 import org.gradle.api.internal.tasks.execution.ResolveTaskOutputCachingStateExecuter;
@@ -98,11 +99,11 @@ public class TaskExecutionServices {
         TaskOutputsGenerationListener taskOutputsGenerationListener = listenerManager.getBroadcaster(TaskOutputsGenerationListener.class);
 
         TaskExecuter executer = new ExecuteActionsTaskExecuter(
-            taskOutputsGenerationListener,
             listenerManager.getBroadcaster(TaskActionListener.class),
             buildOperationExecutor,
             asyncWorkTracker
         );
+        executer = new PrepareOutputsTaskExecuter(executer, taskOutputsGenerationListener);
         boolean verifyInputsEnabled = Boolean.getBoolean("org.gradle.tasks.verifyinputs");
         if (verifyInputsEnabled) {
             executer = new VerifyNoInputChangesTaskExecuter(repository, executer);

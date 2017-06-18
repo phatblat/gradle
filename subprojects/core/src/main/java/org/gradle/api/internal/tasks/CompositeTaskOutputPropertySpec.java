@@ -69,7 +69,7 @@ public class CompositeTaskOutputPropertySpec extends AbstractTaskOutputPropertyS
             };
         } else {
             return Iterators.<TaskOutputFilePropertySpec>singletonIterator(
-                new NonCacheableTaskOutputPropertySpec(taskName, this, resolver, unpackedPaths)
+                new NonCacheableTaskOutputPropertySpec(taskName, this, resolver, outputType, unpackedPaths)
             );
         }
     }

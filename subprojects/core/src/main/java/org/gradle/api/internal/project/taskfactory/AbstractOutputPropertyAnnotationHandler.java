@@ -16,8 +16,6 @@
 
 package org.gradle.api.internal.project.taskfactory;
 
-import org.gradle.api.Action;
-import org.gradle.api.Task;
 import org.gradle.api.internal.TaskInternal;
 import org.gradle.api.tasks.TaskOutputFilePropertyBuilder;
 
@@ -42,19 +40,11 @@ public abstract class AbstractOutputPropertyAnnotationHandler implements Propert
                     .withPropertyName(context.getName())
                     .withPathSensitivity(getPathSensitivity(context))
                     .optional(context.isOptional());
-                task.prependParallelSafeAction(new Action<Task>() {
-                    @Override
-                    public void execute(Task task) {
-                        beforeTask(futureValue);
-                    }
-                });
             }
         });
     }
 
     protected abstract TaskOutputFilePropertyBuilder createPropertyBuilder(TaskPropertyActionContext context, TaskInternal task, Callable<Object> futureValue);
-
-    protected abstract void beforeTask(Callable<Object> futureValue);
 
     protected abstract void validate(String propertyName, Object value, Collection<String> messages);
 }

@@ -23,13 +23,16 @@ import org.gradle.api.internal.changedetection.state.TaskFilePropertyCompareStra
 import org.gradle.api.internal.file.FileResolver;
 import org.gradle.api.tasks.TaskPropertyBuilder;
 
-public class NonCacheableTaskOutputPropertySpec extends AbstractTaskOutputsDeprecatingTaskPropertyBuilder implements TaskOutputFilePropertySpec {
+import java.io.File;
 
+public class NonCacheableTaskOutputPropertySpec extends AbstractTaskOutputsDeprecatingTaskPropertyBuilder implements TaskOutputFilePropertySpec {
     private final CompositeTaskOutputPropertySpec parent;
+    private final CacheableTaskOutputFilePropertySpec.OutputType outputType;
     private final FileCollection files;
 
-    public NonCacheableTaskOutputPropertySpec(String taskName, CompositeTaskOutputPropertySpec parent, FileResolver resolver, Object paths) {
+    public NonCacheableTaskOutputPropertySpec(String taskName, CompositeTaskOutputPropertySpec parent, FileResolver resolver, CacheableTaskOutputFilePropertySpec.OutputType outputType, Object paths) {
         this.parent = parent;
+        this.outputType = outputType;
         this.files = new TaskPropertyFileCollection(taskName, "output", this, resolver, paths);
     }
 
@@ -61,6 +64,24 @@ public class NonCacheableTaskOutputPropertySpec extends AbstractTaskOutputsDepre
     @Override
     public int compareTo(TaskPropertySpec o) {
         return parent.compareTo(o);
+    }
+
+    @Override
+    public void prepareOutputs() {
+            switch (outputType) {
+                case FILE:
+                    for (File file : getPropertyFiles()) {
+                        TaskOutputsUtil.ensureParentDirectoryExists(file);
+                    }
+                    break;
+                case DIRECTORY:
+                    for (File file : getPropertyFiles()) {
+                        TaskOutputsUtil.ensureDirectoryExists(file);
+                    }
+                    break;
+                default:
+                    throw new IllegalArgumentException();
+        }
     }
 
     @Override

@@ -50,6 +50,23 @@ public class DefaultCacheableTaskOutputFilePropertySpec extends AbstractTaskOutp
     }
 
     @Override
+    public void prepareOutputs() {
+        File file = getOutputFile();
+        if (file != null) {
+            switch (outputType) {
+                case FILE:
+                    TaskOutputsUtil.ensureParentDirectoryExists(file);
+                    break;
+                case DIRECTORY:
+                    TaskOutputsUtil.ensureDirectoryExists(file);
+                    break;
+                default:
+                    throw new IllegalArgumentException();
+            }
+        }
+    }
+
+    @Override
     public OutputType getOutputType() {
         return outputType;
     }
