@@ -152,11 +152,7 @@ public class ExecuteActionsTaskExecuter implements TaskExecuter {
 
     @Contextual
     private static class MultipleTaskActionFailures extends DefaultMultiCauseException {
-        public MultipleTaskActionFailures(String message, Throwable... causes) {
-            super(message, causes);
-        }
-
-        public MultipleTaskActionFailures(String message, Iterable<? extends Throwable> causes) {
+        MultipleTaskActionFailures(String message, Iterable<? extends Throwable> causes) {
             super(message, causes);
         }
     }

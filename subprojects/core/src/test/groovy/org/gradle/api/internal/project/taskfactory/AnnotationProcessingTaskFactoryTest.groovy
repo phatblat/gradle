@@ -102,7 +102,7 @@ class AnnotationProcessingTaskFactoryTest extends AbstractProjectBuilderSpec {
         def task2 = expectTaskCreated(TaskWithInputFile, missingFile)
 
         expect:
-        task.actions[0].action.is(task2.actions[0].action)
+        task.validators[0].is(task2.validators[0])
     }
 
     @Unroll
@@ -631,7 +631,7 @@ class AnnotationProcessingTaskFactoryTest extends AbstractProjectBuilderSpec {
     private TaskInternal expectTaskCreated(final Class type, final Object... params) {
         final Class decorated = project.getServices().get(ClassGenerator).generate(type)
         TaskInternal task = (TaskInternal) AbstractTask.injectIntoNewInstance(project, "task", type, new Callable<TaskInternal>() {
-            public TaskInternal call() throws Exception {
+            TaskInternal call() throws Exception {
                 if (params.length > 0) {
                     return type.cast(decorated.constructors[0].newInstance(params))
                 } else {

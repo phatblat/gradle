@@ -101,6 +101,40 @@ class TaskFilePropertiesIntegrationTest extends AbstractIntegrationSpec {
         file("build/dir5").directory
     }
 
+    def "does not create output locations for task with no action"() {
+        buildFile << """
+            class TransformTask extends DefaultTask {
+                @OutputFile
+                File outputFile
+                @OutputDirectory
+                File outputDir
+                @OutputFiles
+                List<File> outputFiles = []
+                @OutputFiles
+                Map<String, File> outputFilesMap = [:]
+                @OutputDirectories
+                List<File> outputDirs = []
+                @OutputDirectories
+                Map<String, File> outputDirsMap = [:]
+            }
+            
+            task someTask(type: TransformTask) {
+                outputFile = file("build/files1/file1.txt")
+                outputDir = file("build/dir1")
+                outputFiles = [file("build/files2/file2.txt"), file("build/files3/file3.txt")]
+                outputFilesMap = [a: file("build/files4/file4.txt"), b: file("build/files5/file5.txt")]
+                outputDirs = [file("build/dir2"), file("build/dir3")]
+                outputDirsMap = [a: file("build/dir4"), b: file("build/dir5")]
+            }
+"""
+
+        when:
+        run("someTask")
+
+        then:
+        !file("build").exists()
+    }
+
     def "task can use Path to represent input and output locations on annotated properties"() {
         buildFile << """
             import java.nio.file.Path

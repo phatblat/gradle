@@ -18,8 +18,6 @@ package org.gradle.api.internal.project.taskfactory;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
-import org.gradle.api.Action;
-import org.gradle.api.Task;
 import org.gradle.api.internal.TaskInternal;
 import org.gradle.api.internal.tasks.execution.TaskValidator;
 
@@ -29,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-public class TaskClassValidator implements TaskValidator, Action<Task> {
+public class TaskClassValidator implements TaskValidator {
     private final ImmutableSortedSet<TaskPropertyInfo> annotatedProperties;
     private final ImmutableList<TaskClassValidationMessage> validationMessages;
     private final boolean cacheable;
@@ -40,11 +38,10 @@ public class TaskClassValidator implements TaskValidator, Action<Task> {
         this.cacheable = cacheable;
     }
 
-    @Override
-    public void execute(Task task) {
-    }
-
     public void addInputsAndOutputs(final TaskInternal task) {
+        if (annotatedProperties.isEmpty()) {
+            return;
+        }
         task.addValidator(this);
         for (TaskPropertyInfo property : annotatedProperties) {
             property.getConfigureAction().update(task, new FutureValue(property, task));
@@ -83,10 +80,6 @@ public class TaskClassValidator implements TaskValidator, Action<Task> {
         for (TaskPropertyValue propertyValue : propertyValues) {
             propertyValue.checkValid(messages);
         }
-    }
-
-    public boolean hasAnythingToValidate() {
-        return !annotatedProperties.isEmpty();
     }
 
     public ImmutableSortedSet<TaskPropertyInfo> getAnnotatedProperties() {

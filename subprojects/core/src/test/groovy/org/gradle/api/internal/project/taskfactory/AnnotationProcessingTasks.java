@@ -156,6 +156,9 @@ public class AnnotationProcessingTasks {
         public File getInputFile() {
             return inputFile;
         }
+
+        @TaskAction
+        public void go() {}
     }
 
     public static class TaskWithInputDir extends DefaultTask {
@@ -169,6 +172,9 @@ public class AnnotationProcessingTasks {
         public File getInputDir() {
             return inputDir;
         }
+
+        @TaskAction
+        public void go() {}
     }
 
     public static class TaskWithInput extends DefaultTask {
@@ -182,6 +188,9 @@ public class AnnotationProcessingTasks {
         public String getInputValue() {
             return inputValue;
         }
+
+        @TaskAction
+        public void go() {}
     }
 
     public static class TaskWithBooleanInput extends DefaultTask {
@@ -227,6 +236,9 @@ public class AnnotationProcessingTasks {
         public File getOutputFile() {
             return outputFile;
         }
+
+        @TaskAction
+        public void go() {}
     }
 
     public static class TaskWithOutputFiles extends DefaultTask {
@@ -236,11 +248,13 @@ public class AnnotationProcessingTasks {
             this.outputFiles = outputFiles;
         }
 
-        @SuppressWarnings("deprecation")
         @OutputFiles
         public List<File> getOutputFiles() {
             return outputFiles;
         }
+
+        @TaskAction
+        public void go() {}
     }
 
     public static class TaskWithBridgeMethod extends DefaultTask implements WithProperty<SpecificProperty> {
@@ -296,6 +310,9 @@ public class AnnotationProcessingTasks {
         public File getOutputDir() {
             return outputDir;
         }
+
+        @TaskAction
+        public void go() {}
     }
 
     public static class TaskWithOutputDirs extends DefaultTask {
@@ -305,11 +322,13 @@ public class AnnotationProcessingTasks {
             this.outputDirs = outputDirs;
         }
 
-        @SuppressWarnings("deprecation")
         @OutputDirectories
         public List<File> getOutputDirs() {
             return outputDirs;
         }
+
+        @TaskAction
+        public void go() {}
     }
 
     public static class TaskWithOptionalOutputDir extends DefaultTask {
@@ -340,6 +359,9 @@ public class AnnotationProcessingTasks {
         public Iterable<? extends File> getInput() {
             return input;
         }
+
+        @TaskAction
+        public void go() {}
     }
 
     public static class BrokenTaskWithInputFiles extends TaskWithInputFiles {
@@ -382,8 +404,10 @@ public class AnnotationProcessingTasks {
         public void clearBean() {
             bean = null;
         }
-    }
 
+        @TaskAction
+        public void go() {}
+    }
 
     public static class TaskWithNestedBeanWithPrivateClass extends DefaultTask {
         Bean2 bean = new Bean2();
@@ -401,6 +425,9 @@ public class AnnotationProcessingTasks {
         public void clearBean() {
             bean = null;
         }
+
+        @TaskAction
+        public void go() {}
     }
 
     public static class TaskWithMultipleProperties extends TaskWithNestedBean {
@@ -412,6 +439,9 @@ public class AnnotationProcessingTasks {
         public File getOutputFile() {
             return bean.getInputFile();
         }
+
+        @TaskAction
+        public void go() {}
     }
 
     public static class TaskWithOptionalNestedBean extends DefaultTask {
@@ -497,6 +527,9 @@ public class AnnotationProcessingTasks {
         public String getb() {
             return b;
         }
+
+        @TaskAction
+        public void go() {}
     }
     //CHECKSTYLE:ON
 }
