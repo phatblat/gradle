@@ -108,6 +108,7 @@ class TaskErrorExecutionIntegrationTest extends AbstractIntegrationTest {
 class CustomTask extends DefaultTask {
     @InputFile File srcFile
     @OutputFile File destFile
+    @TaskAction def go() { }
 }
 
 task custom(type: CustomTask)
