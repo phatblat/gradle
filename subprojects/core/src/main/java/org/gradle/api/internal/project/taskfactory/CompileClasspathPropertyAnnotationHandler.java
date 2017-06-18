@@ -22,7 +22,7 @@ import org.gradle.api.tasks.CompileClasspath;
 
 import java.lang.annotation.Annotation;
 
-public class CompileClasspathPropertyAnnotationHandler extends ClasspathPropertyAnnotationHandler {
+public class CompileClasspathPropertyAnnotationHandler extends AbstractSnapshottingPropertyAnnotationHandler {
     @Override
     public Class<? extends Annotation> getAnnotationType() {
         return CompileClasspath.class;
