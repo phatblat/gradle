@@ -80,10 +80,12 @@ public class ApplicationPlugin implements Plugin<Project> {
             @Override
             public void execute(Task task) {
                 Sync sync = (Sync) task;
-                if (sync.getDestinationDir().isDirectory()) {
-                    if (!new File(sync.getDestinationDir(), "lib").isDirectory() || !new File(sync.getDestinationDir(), "bin").isDirectory()) {
+                File destinationDir = sync.getDestinationDir();
+                if (destinationDir.isDirectory() && destinationDir.list().length != 0) {
+                    // Non-empty directory
+                    if (!new File(destinationDir, "lib").isDirectory() || !new File(destinationDir, "bin").isDirectory()) {
                         throw new GradleException("The specified installation directory \'"
-                            + sync.getDestinationDir()
+                            + destinationDir
                             + "\' is neither empty nor does it contain an installation for \'"
                             + pluginConvention.getApplicationName()
                             + "\'.\n"
