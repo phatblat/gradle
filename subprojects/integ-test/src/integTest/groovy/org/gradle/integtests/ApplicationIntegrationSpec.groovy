@@ -398,7 +398,6 @@ class Main {
                 outputs.dir docs
 
                 doLast {
-                    assert docs.mkdirs()
                     new File(docs, "readme.txt") << "Read me!!!"
                 }
             }
