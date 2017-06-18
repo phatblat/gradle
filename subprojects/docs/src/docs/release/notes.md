@@ -45,9 +45,11 @@ The following are the newly deprecated items in this Gradle release. If you have
 
 ## Potential breaking changes
 
-<!--
-### Example breaking change
--->
+### Changes to task output directory creation
+
+Gradle now creates task output directories and the parent directory for task output files consistently, regardless of whether the task output is defined using an annotated task property or using the `TaskOutputs` API. Previously Gradle would create these directories for task outputs defined using an annotated task property.  
+
+These directories are now only created for tasks that have actions defined, so that declaring an output for a task with no actions has no effect. 
 
 ## External contributions
 
