@@ -19,7 +19,6 @@ package org.gradle.api.internal.project.taskfactory;
 import org.gradle.api.internal.TaskInternal;
 import org.gradle.api.tasks.TaskOutputFilePropertyBuilder;
 
-import java.util.Collection;
 import java.util.concurrent.Callable;
 
 import static org.gradle.api.internal.project.taskfactory.PropertyAnnotationUtils.getPathSensitivity;
@@ -27,12 +26,6 @@ import static org.gradle.api.internal.project.taskfactory.PropertyAnnotationUtil
 public abstract class AbstractOutputPropertyAnnotationHandler implements PropertyAnnotationHandler {
 
     public void attachActions(final TaskPropertyActionContext context) {
-        context.setValidationAction(new ValidationAction() {
-            @Override
-            public void validate(String propertyName, Object value, Collection<String> messages) {
-                AbstractOutputPropertyAnnotationHandler.this.validate(propertyName, value, messages);
-            }
-        });
         context.setConfigureAction(new UpdateAction() {
             @Override
             public void update(TaskInternal task, final Callable<Object> futureValue) {
@@ -45,6 +38,4 @@ public abstract class AbstractOutputPropertyAnnotationHandler implements Propert
     }
 
     protected abstract TaskOutputFilePropertyBuilder createPropertyBuilder(TaskPropertyActionContext context, TaskInternal task, Callable<Object> futureValue);
-
-    protected abstract void validate(String propertyName, Object value, Collection<String> messages);
 }

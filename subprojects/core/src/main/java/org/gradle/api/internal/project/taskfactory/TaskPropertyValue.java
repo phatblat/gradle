@@ -22,6 +22,4 @@ public interface TaskPropertyValue {
     Object getValue();
 
     void checkNotNull(Collection<String> messages);
-
-    void checkValid(Collection<String> messages);
 }

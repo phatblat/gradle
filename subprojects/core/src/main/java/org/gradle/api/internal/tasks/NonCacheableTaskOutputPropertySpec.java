@@ -24,6 +24,7 @@ import org.gradle.api.internal.file.FileResolver;
 import org.gradle.api.tasks.TaskPropertyBuilder;
 
 import java.io.File;
+import java.util.Collection;
 
 public class NonCacheableTaskOutputPropertySpec extends AbstractTaskOutputsDeprecatingTaskPropertyBuilder implements TaskOutputFilePropertySpec {
     private final CompositeTaskOutputPropertySpec parent;
@@ -81,6 +82,27 @@ public class NonCacheableTaskOutputPropertySpec extends AbstractTaskOutputsDepre
                     break;
                 default:
                     throw new IllegalArgumentException();
+        }
+    }
+
+    @Override
+    public void validate(Collection<String> messages) {
+        if (!parent.isStrict()) {
+            return;
+        }
+        switch (outputType) {
+            case FILE:
+                for (File file : getPropertyFiles()) {
+                    TaskOutputsUtil.validateFile(getPropertyName(), file, messages);
+                }
+                break;
+            case DIRECTORY:
+                for (File file : getPropertyFiles()) {
+                    TaskOutputsUtil.validateDirectory(getPropertyName(), file, messages);
+                }
+                break;
+            default:
+                throw new IllegalArgumentException();
         }
     }
 

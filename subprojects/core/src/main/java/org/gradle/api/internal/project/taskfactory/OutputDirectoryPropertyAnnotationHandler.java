@@ -16,17 +16,12 @@
 package org.gradle.api.internal.project.taskfactory;
 
 import org.gradle.api.internal.TaskInternal;
+import org.gradle.api.internal.tasks.TaskOutputPropertySpecAndBuilder;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskOutputFilePropertyBuilder;
-import org.gradle.util.GFileUtils;
 
-import java.io.File;
 import java.lang.annotation.Annotation;
-import java.nio.file.Path;
-import java.util.Collection;
 import java.util.concurrent.Callable;
-
-import static org.gradle.api.internal.tasks.TaskOutputsUtil.validateDirectory;
 
 public class OutputDirectoryPropertyAnnotationHandler extends AbstractOutputPropertyAnnotationHandler {
 
@@ -36,22 +31,9 @@ public class OutputDirectoryPropertyAnnotationHandler extends AbstractOutputProp
     }
 
     @Override
-    protected void validate(String propertyName, Object value, Collection<String> messages) {
-        if (value != null) {
-            validateDirectory(propertyName, toFile(value), messages);
-        }
-    }
-
-    @Override
     protected TaskOutputFilePropertyBuilder createPropertyBuilder(TaskPropertyActionContext context, TaskInternal task, Callable<Object> futureValue) {
-        return task.getOutputs().dir(futureValue);
-    }
-
-    private File toFile(Object value) {
-        Object unpacked = GFileUtils.unpack(value);
-        if (unpacked instanceof Path) {
-            return ((Path) unpacked).toFile();
-        }
-        return (File) unpacked;
+        TaskOutputPropertySpecAndBuilder builder = (TaskOutputPropertySpecAndBuilder) task.getOutputs().dir(futureValue);
+        builder.strict();
+        return builder;
     }
 }

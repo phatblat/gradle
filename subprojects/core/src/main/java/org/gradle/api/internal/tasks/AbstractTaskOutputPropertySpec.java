@@ -28,6 +28,7 @@ import static org.gradle.api.internal.changedetection.state.TaskFilePropertyComp
 
 abstract class AbstractTaskOutputPropertySpec extends AbstractTaskOutputsDeprecatingTaskPropertyBuilder implements TaskOutputPropertySpecAndBuilder {
     private boolean optional;
+    private boolean strict;
     private SnapshotNormalizationStrategy snapshotNormalizationStrategy = TaskFilePropertySnapshotNormalizationStrategy.ABSOLUTE;
 
     @Override
@@ -43,6 +44,16 @@ abstract class AbstractTaskOutputPropertySpec extends AbstractTaskOutputsDepreca
     @Override
     public TaskOutputFilePropertyBuilder optional() {
         return optional(true);
+    }
+
+    public boolean isStrict() {
+        return strict;
+    }
+
+    @Override
+    public TaskOutputPropertySpecAndBuilder strict() {
+        strict = true;
+        return this;
     }
 
     @Override

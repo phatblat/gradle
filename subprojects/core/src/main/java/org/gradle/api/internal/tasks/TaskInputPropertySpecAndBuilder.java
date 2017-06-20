@@ -16,5 +16,8 @@
 
 package org.gradle.api.internal.tasks;
 
+import java.util.Collection;
+
 public interface TaskInputPropertySpecAndBuilder extends TaskInputFilePropertySpec, TaskInputFilePropertyBuilderInternal {
+    void validate(Collection<String> messages);
 }

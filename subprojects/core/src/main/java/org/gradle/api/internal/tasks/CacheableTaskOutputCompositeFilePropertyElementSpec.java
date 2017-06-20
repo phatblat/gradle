@@ -24,6 +24,7 @@ import org.gradle.api.internal.changedetection.state.TaskFilePropertyCompareStra
 import org.gradle.api.internal.file.collections.SimpleFileCollection;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Collections;
 
 class CacheableTaskOutputCompositeFilePropertyElementSpec implements CacheableTaskOutputFilePropertySpec {
@@ -52,6 +53,23 @@ class CacheableTaskOutputCompositeFilePropertyElementSpec implements CacheableTa
                 break;
             case DIRECTORY:
                 TaskOutputsUtil.ensureDirectoryExists(file);
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    @Override
+    public void validate(Collection<String> messages) {
+        if (!parentProperty.isStrict()) {
+            return;
+        }
+        switch (parentProperty.getOutputType()) {
+            case FILE:
+                TaskOutputsUtil.validateFile(getPropertyName(), file, messages);
+                break;
+            case DIRECTORY:
+                TaskOutputsUtil.validateDirectory(getPropertyName(), file, messages);
                 break;
             default:
                 throw new IllegalArgumentException();

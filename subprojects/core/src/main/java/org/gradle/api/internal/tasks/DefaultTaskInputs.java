@@ -28,6 +28,7 @@ import org.gradle.api.internal.file.FileResolver;
 import org.gradle.api.internal.file.collections.FileCollectionResolveContext;
 import org.gradle.api.tasks.TaskInputs;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +80,7 @@ public class DefaultTaskInputs implements TaskInputsInternal {
         return taskMutator.mutate("TaskInputs.files(Object...)", new Callable<TaskInputFilePropertyBuilderInternal>() {
             @Override
             public TaskInputFilePropertyBuilderInternal call() {
-                return addSpec(paths);
+                return addSpec(new DefaultTaskInputFilesPropertySpec(task.getName(), resolver, paths));
             }
         });
     }
@@ -89,7 +90,7 @@ public class DefaultTaskInputs implements TaskInputsInternal {
         return taskMutator.mutate("TaskInputs.file(Object)", new Callable<TaskInputFilePropertyBuilderInternal>() {
             @Override
             public TaskInputFilePropertyBuilderInternal call() {
-                return addSpec(path);
+                return addSpec(new DefaultTaskInputFilesPropertySpec(task.getName(), resolver, path));
             }
         });
     }
@@ -99,7 +100,7 @@ public class DefaultTaskInputs implements TaskInputsInternal {
         return taskMutator.mutate("TaskInputs.dir(Object)", new Callable<TaskInputFilePropertyBuilderInternal>() {
             @Override
             public TaskInputFilePropertyBuilderInternal call() {
-                return addSpec(resolver.resolveFilesAsTree(dirPath));
+                return addSpec(new DefaultTaskInputDirectoryPropertySpec(task.getName(), resolver, resolver.resolveFiles(dirPath)));
             }
         });
     }
@@ -119,8 +120,7 @@ public class DefaultTaskInputs implements TaskInputsInternal {
         return allSourceFiles;
     }
 
-    private TaskInputFilePropertyBuilderInternal addSpec(Object paths) {
-        DefaultTaskInputPropertySpec spec = new DefaultTaskInputPropertySpec(task.getName(), resolver, paths);
+    private TaskInputFilePropertyBuilderInternal addSpec(AbstractTaskInputPropertySpec spec) {
         filePropertiesInternal.add(spec);
         return spec;
     }
@@ -173,6 +173,13 @@ public class DefaultTaskInputs implements TaskInputsInternal {
             }
         });
         return this;
+    }
+
+    @Override
+    public void validate(Collection<String> messages) {
+        for (TaskInputPropertySpecAndBuilder propertySpec : filePropertiesInternal) {
+            propertySpec.validate(messages);
+        }
     }
 
     private static class TaskInputUnionFileCollection extends CompositeFileCollection implements Describable {

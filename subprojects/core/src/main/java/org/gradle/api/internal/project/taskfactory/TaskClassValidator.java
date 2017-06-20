@@ -21,7 +21,6 @@ import com.google.common.collect.ImmutableSortedSet;
 import org.gradle.api.internal.TaskInternal;
 import org.gradle.api.internal.tasks.execution.TaskValidator;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -39,9 +38,6 @@ public class TaskClassValidator implements TaskValidator {
     }
 
     public void addInputsAndOutputs(final TaskInternal task) {
-        if (annotatedProperties.isEmpty()) {
-            return;
-        }
         task.addValidator(this);
         for (TaskPropertyInfo property : annotatedProperties) {
             property.getConfigureAction().update(task, new FutureValue(property, task));
@@ -70,15 +66,11 @@ public class TaskClassValidator implements TaskValidator {
 
     @Override
     public void validate(TaskInternal task, Collection<String> messages) {
-        List<TaskPropertyValue> propertyValues = new ArrayList<TaskPropertyValue>();
+        task.getInputs().validate(messages);
+        task.getOutputs().validate(messages);
         for (TaskPropertyInfo property : annotatedProperties) {
-            propertyValues.add(property.getValue(task));
-        }
-        for (TaskPropertyValue propertyValue : propertyValues) {
+            TaskPropertyValue propertyValue = property.getValue(task);
             propertyValue.checkNotNull(messages);
-        }
-        for (TaskPropertyValue propertyValue : propertyValues) {
-            propertyValue.checkValid(messages);
         }
     }
 

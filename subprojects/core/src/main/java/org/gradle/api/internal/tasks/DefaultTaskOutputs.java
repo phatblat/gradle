@@ -38,6 +38,7 @@ import org.gradle.api.specs.AndSpec;
 import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.TaskOutputFilePropertyBuilder;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -264,6 +265,13 @@ public class DefaultTaskOutputs implements TaskOutputsInternal {
     public void prepareOutputs() {
         for (TaskOutputFilePropertySpec propertySpec : getFileProperties()) {
             propertySpec.prepareOutputs();
+        }
+    }
+
+    @Override
+    public void validate(Collection<String> messages) {
+        for (TaskOutputFilePropertySpec propertySpec : getFileProperties()) {
+            propertySpec.validate(messages);
         }
     }
 

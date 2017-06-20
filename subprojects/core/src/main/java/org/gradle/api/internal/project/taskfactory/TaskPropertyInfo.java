@@ -27,19 +27,12 @@ import java.util.Collection;
 import java.util.concurrent.Callable;
 
 public class TaskPropertyInfo implements Comparable<TaskPropertyInfo> {
-    private static final ValidationAction NO_OP_VALIDATION_ACTION = new ValidationAction() {
-        public void validate(String propertyName, Object value, Collection<String> messages) {
-        }
-    };
     private static final TaskPropertyValue NO_OP_VALUE = new TaskPropertyValue() {
         public Object getValue() {
             return null;
         }
 
         public void checkNotNull(Collection<String> messages) {
-        }
-
-        public void checkValid(Collection<String> messages) {
         }
     };
     private static final UpdateAction NO_OP_CONFIGURATION_ACTION = new UpdateAction() {
@@ -51,16 +44,14 @@ public class TaskPropertyInfo implements Comparable<TaskPropertyInfo> {
     private final String propertyName;
     private final Class<? extends Annotation> propertyType;
     private final Method method;
-    private final ValidationAction validationAction;
     private final UpdateAction configureAction;
     private final boolean optional;
 
-    TaskPropertyInfo(TaskPropertyInfo parent, String propertyName, Class<? extends Annotation> propertyType, Method method, ValidationAction validationAction, UpdateAction configureAction, boolean optional) {
+    TaskPropertyInfo(TaskPropertyInfo parent, String propertyName, Class<? extends Annotation> propertyType, Method method, UpdateAction configureAction, boolean optional) {
         this.parent = parent;
         this.propertyName = propertyName;
         this.propertyType = propertyType;
         this.method = method;
-        this.validationAction = validationAction == null ? NO_OP_VALIDATION_ACTION : validationAction;
         this.configureAction = configureAction == null ? NO_OP_CONFIGURATION_ACTION : configureAction;
         this.optional = optional;
     }
@@ -110,13 +101,6 @@ public class TaskPropertyInfo implements Comparable<TaskPropertyInfo> {
             public void checkNotNull(Collection<String> messages) {
                 if (value == null && !optional) {
                     messages.add(String.format("No value has been specified for property '%s'.", propertyName));
-                }
-            }
-
-            @Override
-            public void checkValid(Collection<String> messages) {
-                if (value != null) {
-                    validationAction.validate(propertyName, value, messages);
                 }
             }
         };

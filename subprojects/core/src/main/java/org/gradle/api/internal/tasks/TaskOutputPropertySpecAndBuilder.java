@@ -19,6 +19,6 @@ package org.gradle.api.internal.tasks;
 import org.gradle.api.tasks.TaskOutputFilePropertyBuilder;
 
 public interface TaskOutputPropertySpecAndBuilder extends TaskPropertySpec, TaskOutputFilePropertyBuilder {
-
+    TaskOutputPropertySpecAndBuilder strict();
 }
 

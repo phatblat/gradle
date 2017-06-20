@@ -22,6 +22,8 @@ import org.gradle.api.internal.tasks.TaskOutputFilePropertySpec;
 import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.TaskOutputs;
 
+import java.util.Collection;
+
 public interface TaskOutputsInternal extends TaskOutputs {
 
     Spec<? super TaskInternal> getUpToDateSpec();
@@ -49,4 +51,9 @@ public interface TaskOutputsInternal extends TaskOutputs {
      * Prepares the outputs of this task, called just prior to execution of the first task action.
      */
     void prepareOutputs();
+
+    /**
+     * Validates the outputs of this task, called just prior to determining whether the task actions should execute. Should really happen earlier.
+     */
+    void validate(Collection<String> messages);
 }

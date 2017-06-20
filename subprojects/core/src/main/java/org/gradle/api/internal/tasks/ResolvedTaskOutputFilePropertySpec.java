@@ -20,6 +20,7 @@ import org.gradle.api.Nullable;
 import org.gradle.api.file.FileCollection;
 
 import java.io.File;
+import java.util.Collection;
 
 public class ResolvedTaskOutputFilePropertySpec extends AbstractTaskOutputPropertySpec implements CacheableTaskOutputFilePropertySpec {
 
@@ -50,6 +51,11 @@ public class ResolvedTaskOutputFilePropertySpec extends AbstractTaskOutputProper
 
     @Override
     public void prepareOutputs() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void validate(Collection<String> messages) {
         throw new UnsupportedOperationException();
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,15 +31,15 @@ import java.util.Map;
 
 import static org.gradle.api.internal.changedetection.state.TaskFilePropertySnapshotNormalizationStrategy.ABSOLUTE;
 
-public class DefaultTaskInputPropertySpec extends AbstractTaskPropertyBuilder implements TaskInputPropertySpecAndBuilder {
-
+public abstract class AbstractTaskInputPropertySpec extends AbstractTaskPropertyBuilder implements TaskInputPropertySpecAndBuilder {
     private final TaskPropertyFileCollection files;
     private boolean skipWhenEmpty;
     private boolean optional;
     private SnapshotNormalizationStrategy snapshotNormalizationStrategy = ABSOLUTE;
     private Class<? extends FileCollectionSnapshotter> snapshotter = GenericFileCollectionSnapshotter.class;
+    private boolean strict;
 
-    public DefaultTaskInputPropertySpec(String taskName, FileResolver resolver, Object paths) {
+    public AbstractTaskInputPropertySpec(String taskName, FileResolver resolver, Object paths) {
         this.files = new TaskPropertyFileCollection(taskName, "input", this, resolver, paths);
     }
 
@@ -76,6 +76,16 @@ public class DefaultTaskInputPropertySpec extends AbstractTaskPropertyBuilder im
     @Override
     public TaskInputFilePropertyBuilderInternal optional(boolean optional) {
         this.optional = optional;
+        return this;
+    }
+
+    public boolean isStrict() {
+        return strict;
+    }
+
+    @Override
+    public TaskInputFilePropertyBuilderInternal strict() {
+        this.strict = true;
         return this;
     }
 

@@ -16,6 +16,10 @@
 
 package org.gradle.api.internal.tasks;
 
+import java.util.Collection;
+
 public interface TaskOutputFilePropertySpec extends TaskFilePropertySpec {
     void prepareOutputs();
+
+    void validate(Collection<String> messages);
 }

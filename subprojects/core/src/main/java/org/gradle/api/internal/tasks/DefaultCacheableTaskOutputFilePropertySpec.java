@@ -21,6 +21,7 @@ import org.gradle.api.internal.file.FileResolver;
 import org.gradle.util.GFileUtils;
 
 import java.io.File;
+import java.util.Collection;
 
 public class DefaultCacheableTaskOutputFilePropertySpec extends AbstractTaskOutputPropertySpec implements CacheableTaskOutputFilePropertySpec {
     private final TaskPropertyFileCollection files;
@@ -43,7 +44,7 @@ public class DefaultCacheableTaskOutputFilePropertySpec extends AbstractTaskOutp
     @Override
     public File getOutputFile() {
         Object unpackedOutput = GFileUtils.unpack(path);
-        if (unpackedOutput == null && isOptional()) {
+        if (unpackedOutput == null) {
             return null;
         }
         return resolver.resolve(path);
@@ -59,6 +60,23 @@ public class DefaultCacheableTaskOutputFilePropertySpec extends AbstractTaskOutp
                     break;
                 case DIRECTORY:
                     TaskOutputsUtil.ensureDirectoryExists(file);
+                    break;
+                default:
+                    throw new IllegalArgumentException();
+            }
+        }
+    }
+
+    @Override
+    public void validate(Collection<String> messages) {
+        File file = getOutputFile();
+        if (file != null && isStrict()) {
+            switch (outputType) {
+                case FILE:
+                    TaskOutputsUtil.validateFile(getPropertyName(), file, messages);
+                    break;
+                case DIRECTORY:
+                    TaskOutputsUtil.validateDirectory(getPropertyName(), file, messages);
                     break;
                 default:
                     throw new IllegalArgumentException();

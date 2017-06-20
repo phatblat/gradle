@@ -20,7 +20,6 @@ import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.TaskInputFilePropertyBuilder;
 
 import java.lang.annotation.Annotation;
-import java.util.Collection;
 import java.util.concurrent.Callable;
 
 public class InputFilesPropertyAnnotationHandler extends AbstractInputPropertyAnnotationHandler {
@@ -29,10 +28,6 @@ public class InputFilesPropertyAnnotationHandler extends AbstractInputPropertyAn
     }
 
     @Override
-    protected void validate(String propertyName, Object value, Collection<String> messages) {
-        // no-op
-    }
-
     protected TaskInputFilePropertyBuilder createPropertyBuilder(TaskPropertyActionContext context, TaskInternal task, Callable<Object> futureValue) {
         return task.getInputs().files(futureValue);
     }

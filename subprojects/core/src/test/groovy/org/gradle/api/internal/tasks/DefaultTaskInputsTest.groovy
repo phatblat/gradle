@@ -17,6 +17,7 @@ package org.gradle.api.internal.tasks
 
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.TaskInternal
+import org.gradle.api.internal.file.FileCollectionInternal
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.internal.file.FileTreeInternal
 import org.gradle.util.UsesNativeServices
@@ -28,9 +29,10 @@ import java.util.concurrent.Callable
 class DefaultTaskInputsTest extends Specification {
     private final File treeFile = new File('tree')
     private final tree = [getFiles: { [treeFile] as Set}] as FileTreeInternal
+    private final dir = [getAsFileTree: { tree }] as FileCollectionInternal
     private final FileResolver resolver = [
             resolve: { new File((String) it) },
-            resolveFilesAsTree: {tree}
+            resolveFiles: { dir }
     ] as FileResolver
 
     private def taskStatusNagger = Stub(TaskMutator) {
