@@ -16,6 +16,7 @@
 
 package org.gradle.api.internal.changedetection.state;
 
+import org.gradle.api.internal.changedetection.rules.ChangeType;
 import org.gradle.internal.resource.ResourceContentMetadataSnapshot;
 
 /**
@@ -27,4 +28,6 @@ public interface FileContentSnapshot extends ResourceContentMetadataSnapshot {
     boolean isContentUpToDate(FileContentSnapshot snapshot);
 
     boolean isContentAndMetadataUpToDate(FileContentSnapshot snapshot);
+
+    ChangeType getChangeType(FileContentSnapshot previous);
 }

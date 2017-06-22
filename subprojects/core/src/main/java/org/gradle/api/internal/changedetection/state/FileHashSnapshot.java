@@ -18,6 +18,7 @@ package org.gradle.api.internal.changedetection.state;
 
 import com.google.common.base.Objects;
 import com.google.common.hash.HashCode;
+import org.gradle.api.internal.changedetection.rules.ChangeType;
 import org.gradle.internal.nativeintegration.filesystem.FileType;
 
 class FileHashSnapshot implements FileContentSnapshot {
@@ -48,6 +49,11 @@ class FileHashSnapshot implements FileContentSnapshot {
         }
         FileHashSnapshot other = (FileHashSnapshot) snapshot;
         return lastModified == other.lastModified && Objects.equal(hash, other.hash);
+    }
+
+    @Override
+    public ChangeType getChangeType(FileContentSnapshot previous) {
+        return previous.getType() == FileType.Missing ? ChangeType.ADDED : ChangeType.MODIFIED;
     }
 
     @Override

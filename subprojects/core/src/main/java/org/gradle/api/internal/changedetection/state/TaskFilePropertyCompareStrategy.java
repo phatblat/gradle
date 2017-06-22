@@ -118,7 +118,7 @@ public enum TaskFilePropertyCompareStrategy {
             FileContentSnapshot currentSnapshot = normalizedCurrent.getSnapshot();
             if (!currentSnapshot.isContentUpToDate(previousSnapshot)) {
                 String path = currentEntry.getKey();
-                TaskStateChange change = new FileChange(path, ChangeType.MODIFIED, fileType);
+                TaskStateChange change = new FileChange(path, currentSnapshot.getChangeType(previousSnapshot), fileType);
                 return singletonIterator(change);
             } else {
                 return emptyIterator();

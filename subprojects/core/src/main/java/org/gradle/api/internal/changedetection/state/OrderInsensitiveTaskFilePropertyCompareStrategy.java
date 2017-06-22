@@ -83,7 +83,7 @@ class OrderInsensitiveTaskFilePropertyCompareStrategy implements TaskFilePropert
                         NormalizedFileSnapshot previousNormalizedSnapshot = previous.get(currentAbsolutePath);
                         FileContentSnapshot previousSnapshot = previousNormalizedSnapshot.getSnapshot();
                         if (!currentSnapshot.isContentUpToDate(previousSnapshot)) {
-                            return new FileChange(currentAbsolutePath, ChangeType.MODIFIED, fileType);
+                            return new FileChange(currentAbsolutePath, currentSnapshot.getChangeType(previousSnapshot), fileType);
                         }
                         // else, unchanged; check next file
                     } else {
@@ -142,7 +142,7 @@ class OrderInsensitiveTaskFilePropertyCompareStrategy implements TaskFilePropert
                         IncrementalFileSnapshotWithAbsolutePath previousSnapshotWithAbsolutePath = previousSnapshotsForNormalizedPath.remove(0);
                         FileContentSnapshot previousSnapshot = previousSnapshotWithAbsolutePath.getSnapshot();
                         if (!currentSnapshot.isContentUpToDate(previousSnapshot)) {
-                            return new FileChange(currentAbsolutePath, ChangeType.MODIFIED, fileType);
+                            return new FileChange(currentAbsolutePath, currentSnapshot.getChangeType(previousSnapshot), fileType);
                         }
                     }
                 }

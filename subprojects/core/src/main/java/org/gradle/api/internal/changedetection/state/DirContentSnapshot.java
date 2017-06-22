@@ -19,6 +19,7 @@ package org.gradle.api.internal.changedetection.state;
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
+import org.gradle.api.internal.changedetection.rules.ChangeType;
 import org.gradle.internal.nativeintegration.filesystem.FileType;
 
 class DirContentSnapshot implements FileContentSnapshot {
@@ -35,6 +36,11 @@ class DirContentSnapshot implements FileContentSnapshot {
     @Override
     public boolean isContentAndMetadataUpToDate(FileContentSnapshot snapshot) {
         return isContentUpToDate(snapshot);
+    }
+
+    @Override
+    public ChangeType getChangeType(FileContentSnapshot previous) {
+        return previous.getType() == FileType.Missing ? ChangeType.ADDED : ChangeType.MODIFIED;
     }
 
     public boolean isContentUpToDate(FileContentSnapshot snapshot) {
